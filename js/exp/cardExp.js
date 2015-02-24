@@ -19,6 +19,7 @@ var  _n = 12;
 var _deck, _hand, _suit, _value;
 var _d, _count;
 var _K=null;
+var clickFlag = false;
 
 var _width='79';
 var _height='123';
@@ -43,8 +44,11 @@ function _dealCard(){
 		console.log("Card Generated Dataset : "+_datasetValues + "-- socr.exp.cardExp.js");
 		console.log(_datasetKeys); 
 		console.log(_datasetValues);
-		$("#grsbutton").removeClass("disabled"); 
-		//view.loadInputSheet(_datasetValues);
+        socr.view.updateCtrlMessage("dataset generated successfully.","success");
+        PubSub.publish("Initial dataset generated");
+		$("#grsbutton").removeClass("disabled");
+		$("#sdbutton").removeClass("disabled"); 
+		clickFlag = false;
 		socr.exp.cardExp.reset();
 	}
 }
@@ -52,9 +56,9 @@ function _dealCard(){
 
 
 return{
-	name:'Card Experiment',
+	name:'cardExp',
 	type:'card',
-	description:'he card experiment consists of dealing n cards at random (and without replacement) from a standard deck of 52 cards. The cards (X1,X2,…,Xn) are recorded on each run. The parameter n can be varied from 1 to 12 with the input control.',
+	description:'The card experiment consists of dealing n cards at random (and without replacement) from a standard deck of 52 cards. The cards (X1,X2,…,Xn) are recorded on each run. The parameter n can be varied from 1 to 12 with the input control.',
 	initialize: function(){
 		//socr.exp.cardExp=socr.exp.cardExp;
 		_nParam = new Parameter(document.getElementById("nInput"), document.getElementById("nLabel"));
@@ -63,10 +67,17 @@ return{
 		socr.exp.cardExp.reset();
 
 		$("#sdbutton").on('click',function(){
-			$("#grsbutton").addClass("disabled");	
-			socr.exp.current.generate();
+			if( clickFlag === false){
+				clickFlag = true;
+			}
+			else {
+				console.log(clickFlag);
+				return false;
+			}	
+			$("#grsbutton").addClass("disabled");
+			$("#sdbutton").addClass("disabled");	
+			socr.exp.cardExp.generate();		
 			$("#accordion").accordion( "activate" , 1);
-			view.updateCtrlMessage("dataset generated successfully.","success");
 		});
 
 		$('#nInput').on('change',function(){
@@ -74,13 +85,19 @@ return{
 		});
 
 		$('#grsbutton').on('click',function(){
-			$.update({to:'dataDriven'});
-			view.updateSimulationInfo();
-		});
+			if(_datasetValues.length!=0)
+				{
+					socr.controller.loadController({to:'dataDriven',from:'Experiment',expName:'binomialCoin'});	//Loads the data into the appModel .
+					socr.view.updateSimulationInfo();		//updates experiment info into third tile in the accordion
+				}
+			else
+				$('.controller-warning').html('<div class="alert alert-error"><a class="close" data-dismiss="alert" href="#">x</a><h4 class="alert-heading">Dataset NOT generated!</h4>Please click the adjacent "Generate Dataset!" button first.</div>');
+			});
+		PubSub.unsubscribe(socr.exp.current.initialize);
 	},
 	
 	generate: function(){
-		view.updateSimulationInfo();		//updates experiment info into third tile in the accordion
+		socr.view.updateSimulationInfo();		//updates experiment info into third tile in the accordion
 		socr.exp.cardExp.setVariable();
 		socr.exp.cardExp.createDataPlot(_n);			//create the canvas fro the dataset
 		$(".device-container").width(_width);
@@ -116,27 +133,30 @@ return{
 	},
 
 	createControllerView:function(){
-	console.log("createControllerView for socr.exp.cardExp executed!");
-	var html='<p class="toolbar"></p><p class="tool"><span id="nLabel" class="badge badge-warning" for="nInput"><var><var>n</var></var> = 10</span><span id="nvalue"></span><input id="nInput" type="range" tabindex="7" class="parameter" min="1" max="100" step="1"></p><p><div><span class="badge badge-warning"> K=<span id="kValue">2</span></span><div id="kValue-slider" style="display:inline-block;width:50%;margin-left:5%"></div></p><button class="btn" id="sdbutton">Generate DataSet!</button><button class="btn btn-danger" id="grsbutton">Generate Random Samples!</button></div>';
-	$('#controller-content').delay(1000).html(html);
-		$('.popups').popover();
-		try{
-		$('.tooltips').tooltip('destroy');	// destroy first and bind tooltips again. UI bug: the "back to generateDataset" (back button) tooltip doesnt vanish after mouse click.
-		}
-		catch(err){
-			console.log(err.message);
-		}
-
-		$('.tooltips').tooltip();
-		var minKVal = socr.exp.multiK ? 2 : 1;
-		$( "#kValue-slider" ).slider({
-			value: minKVal,
-			min: minKVal,
-			max: 10,
-			step: 1,
-			slide: function( event, ui ) {
-			$( "#kValue" ).html( ui.value );
+		console.log("createControllerView for socr.exp.cardExp executed!");
+		config={};
+		$.get("partials/exp/cardExp.tmpl",function(data){
+			var config = {};
+            var html = Mustache.render(data,config);
+			$('#controller-content').delay(1000).html(html);
+			$('.popups').popover();
+			try{
+				$('.tooltips').tooltip('destroy');	// destroy first and bind tooltips again. UI bug: the "back to generateDataset" (back button) tooltip doesnt vanish after mouse click.
 			}
+			catch(err){
+				console.log(err.message);
+			}
+			$('.tooltips').tooltip();
+			$( "#kValue-slider" ).slider({
+				value: 1,
+				min: 1,
+				max: 10,
+				step: 1,
+				slide: function( event, ui ) {
+				$( "#kValue" ).html( ui.value );
+				}
+			});
+			PubSub.publish("controller view for cardExp created");
 		});
 	},
 

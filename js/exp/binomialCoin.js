@@ -13,7 +13,6 @@
  		*/
 socr.exp.binomialCoin=function(){
 
-
 //::::::: PRIVATE PROPERTIES :::::::::::::::
 var _stepID;
 var _pParam, _nParam; // binomialCoin is the distribution object
@@ -36,6 +35,7 @@ var _height='30';
 
 var _coin = [];
 var _arrCount=0;
+var clickFlag = false;
 
 //::::::PRIVATE METHODS:::::::::::::
 
@@ -63,18 +63,23 @@ function _tossCoin(){
 			}
 		//console.log(_datasetKeys); 
 		//console.log(_datasetValues);
-		$("#grsbutton").removeClass("disabled"); 
+        socr.view.updateCtrlMessage("dataset generated successfully.","success");
+        PubSub.publish("Initial dataset generated");
+		$("#grsbutton").removeClass("disabled");
+		$("#sdbutton").removeClass("disabled"); 
+		clickFlag = false;
 		socr.exp.binomialCoin.reset();
 	}
 }
 
 //:::::::::::: PUBLIC METHODS :::::::::::::
 return{
-	name:"Binomial Coin Toss",
+	name:"binomialCoin",
 	type:"coin",
 	description:"The random experiment consists of tossing n coins, each with probability of heads p. Random variable Y gives the number of heads, and random variable M gives the proportion of heads. These are recorded on each update in the data table. Either Y or M can be selected with the list box. The probability density function and moments of the selected variable are shown in blue in the distribution graph blue and are recorded in the distribution table. On each update, the empirical density function and moments of the selected variable are shown in red in the distribution graph and are recorded in the distribution table. The parameters n and p can be varied with scroll bars.",
     
     initialize: function(){
+    	console.log("binomialCoin initialize started");
 		_nParam = new Parameter(document.getElementById("nInput"), document.getElementById("nLabel"));
 		_nParam.setProperties(1, _N, 1, _n, "<var>n</var>");
 		_pParam = new Parameter(document.getElementById("pInput"), document.getElementById("pLabel"));
@@ -82,12 +87,19 @@ return{
 		socr.exp.binomialCoin.reset();
 		// BINDING BUTTONS OF THE CONTROLLER
 		$("#sdbutton").on('click',function(){
-			//***clicking this button only generates the dataset...doesnt load it into the appModel. Clicking the grsbutton does that.
-			$("#grsbutton").addClass("disabled");	
+			//clicking this button only generates the dataset
+			//doesnt load it into the appModel. Clicking the grsbutton does that.
+			if( clickFlag === false){
+				clickFlag = true;
+			}
+			else {
+				console.log(clickFlag);
+				return false;
+			}	
+			$("#grsbutton").addClass("disabled");
+			$("#sdbutton").addClass("disabled");	
 			socr.exp.binomialCoin.generate();		
 			$("#accordion").accordion( "activate" , 1);
-			view.updateCtrlMessage("dataset generated successfully.","success");
-			
 		});
 
 		$('#nInput,#pInput').on('change',function(){
@@ -95,14 +107,15 @@ return{
 			});
 
 		$('#grsbutton').on('click',function(){
-			if(_values.length!=0)
+			if(_datasetValues.length!=0)
 				{
-					$.update({to:'dataDriven'});	//Loads the data into the appModel .
-					view.updateSimulationInfo();		//updates experiment info into third tile in the accordion
+					socr.controller.loadController({to:'dataDriven',from:'Experiment',expName:'binomialCoin'});	//Loads the data into the appModel .
+					socr.view.updateSimulationInfo();		//updates experiment info into third tile in the accordion
 				}
 			else
 				$('.controller-warning').html('<div class="alert alert-error"><a class="close" data-dismiss="alert" href="#">x</a><h4 class="alert-heading">Dataset NOT generated!</h4>Please click the adjacent "Generate Dataset!" button first.</div>');
 			});
+		PubSub.unsubscribe(socr.exp.current.initialize);
 	},
 
 	generate: function(){
@@ -128,26 +141,31 @@ return{
 		socr.exp.binomialCoin.setVariable();
  	},
 	createControllerView:function(){
-	console.log("createControllerView for binomialCoin executed!");
-		var html='<p class="toolbar"><p class="tool"><span id="nLabel" class="badge badge-warning" for="nInput">N = </span><span id="nvalue"></span><input id="nInput" type="range" tabindex="7" class="parameter"/><i class="icon-question-sign popups" rel="popover" data-content=" n = number of coins to be tossed!" data-original-title="n"></i></p><p class="tool"><span id="pLabel" class="badge badge-warning" for="pInput">P = </span><span id="pvalue"></span><input id="pInput" type="range" tabindex="8" class="parameter"/><i class="icon-question-sign popups" rel="popover" data-content=" p = probability of getting a Head!" data-original-title="p"></i></p><select id="rvSelect" tabindex="9" title="Random variable" ><option value="0" selected="true">Y: Number of heads</option><option value="1">M: Proportion of heads</option></select><div><span class="badge badge-warning"> K=<span id="kValue">1</span></span><div id="kValue-slider" style="display:inline-block;width:50%;margin-left:5%"></div></div></p><button class="btn popups" id="sdbutton"  rel="popover" data-content="To generate random samples, first you need a dataset to start with. Once you generate it, go ahead and generate random samples!" data-original-title="Dataset">Generate DataSet!</button>&nbsp;<button class="btn btn-danger" id="grsbutton" >Generate Random Samples!</button><div class="controller-warning"></div>';
-		$('#controller-content').delay(1000).html(html);
-		$('.popups').popover();
-		try{
-		$('.tooltips').tooltip('destroy');	// destroy first and bind tooltips again. UI bug: the "back to generateDataset" (back button) tooltip doesnt vanish after mouse click.
-		}
-		catch(err){
-			console.log(err.message);
-		}
-
-		$('.tooltips').tooltip();
-		$( "#kValue-slider" ).slider({
-			value:1,
-			min: 1,
-			max: 10,
-			step: 1,
-			slide: function( event, ui ) {
-			$( "#kValue" ).html( ui.value );
+		//console.log("createControllerView for binomialCoin executed!");
+		$.get("partials/exp/binomialCoin.tmpl",function(data){
+            var config = {};
+            var html = Mustache.render(data,config);
+			$('#controller-content').delay(1000).html(html);
+			$('.popups').popover();
+			try{
+				$('.tooltips').tooltip('destroy');	// destroy first and bind tooltips again. UI bug: the "back to generateDataset" (back button) tooltip doesnt vanish after mouse click.
 			}
+			catch(err){
+				console.log(err.message);
+			}
+
+			$('.tooltips').tooltip();
+			$( "#kValue-slider" ).slider({
+				value:1,
+				min: 1,
+				max: 10,
+				step: 1,
+				slide: function( event, ui ) {
+				$( "#kValue" ).html( ui.value );
+				}
+			});
+			console.log("createControllerView for binomialCoin executed!");
+			PubSub.publish("controller view for binomialCoin created");
 		});
 	},
 	

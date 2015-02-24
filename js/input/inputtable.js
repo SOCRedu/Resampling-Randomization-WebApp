@@ -14,7 +14,7 @@
         else {
           var currentSettings = $.extend({}, settings), instance;
           if (options) {
-            $.extend(currentSettings, options);
+             $.extend(currentSettings, options);
           }
           instance = new Inputtable($this, currentSettings);
           $this.data("inputtable", instance);
@@ -54,6 +54,7 @@
       scrollable: null,
       hasLegend: null,
       lastAutoComplete: null,
+      colHeaders: true,
     //  undoRedo: settings.undo ? new inputtable.UndoRedo(this) : null,
       extensions: {},
       stopNextPropagation: 0
@@ -701,7 +702,7 @@
        * @param {String} [source="populateFromArray"]
        * @return {Object} ending td in pasted area
        */
-      populateFromArray: function (start, input, end, allowHtml, source) {
+      populateFromArrayAsync: function (start, input, end, allowHtml, source) {
         var r, rlen, c, clen, td, endTd, changes = [], current = {};
         rlen = input.length;
         if (rlen === 0) {
@@ -756,7 +757,16 @@
         return endTd || grid.getCellAtCoords(start);
       },
 
-      populateFromArraySwift: function (start, input, end, allowHtml, source) {
+      /**
+       * Populate cells at position with 2d array
+       * @param {Object} start Start selection position
+       * @param {Array} input 2d array
+       * @param {Object} [end] End selection position (only for drag-down mode)
+       * @param {Boolean} [allowHtml]
+       * @param {String} [source="populateFromArray"]
+       * @return {Object} ending td in pasted area
+       */
+      populateFromArray: function (start, input, end, allowHtml, source) {
         var r, rlen, c, clen, td, endTd, changes = [], current = {};
         rlen = input.length;
         if (rlen === 0) {
@@ -2305,7 +2315,7 @@
          
               if(++i > ilen - 1){
                 clearInterval(processor);
-                console.log('Finished proessing :)')
+                console.log('Dataset Import Complete')
               }
 
             busy = false;
@@ -2461,7 +2471,23 @@
         }
       }, 10);
 
+      setTimeout(function(){
+        $dataTable.inputtable({});
+        var offeset = $($('tr.htColHeader')[0]).offset();
+        $($('tr.htColHeader')[0]).offset(offeset);
+      },10)
       return td;
+
+    }
+
+    this.getColHeaders = function(row){
+
+      var headers = [];
+      for(var i=0, ilen = self.count; i<ilen; i++){
+        headers.push(self.colHeader.columnLabel(i));
+      }
+
+      return self;
 
     }
 
@@ -2500,6 +2526,20 @@
     }
     return box;
   };
+
+  /**
+     * Return first row elements
+     * @public
+     * @return {Array}
+  */
+  this.getFirstRow = function (){
+    var data = datamap.getAll(),
+        clen = data[0].length
+
+        return datamap.getRange({row: 0, col: 0},{row: 0, col:  clen + 1});
+
+  }
+
   /**
      * Return non-empty data as array
      * @public
@@ -2530,6 +2570,15 @@
       //console.log(nonEmptyCols + ' , ' + nonEmptyRows)
       return datamap.getRange({row: nonEmptyRows, col: 0},{row: 0, col: nonEmptyCols});
     };
+
+  /****
+
+    Temporary self refresh hook
+
+  ****/
+  this.refreshSpreadsheet = function(){
+    self.blockedCols.refresh();
+  }
   /*
     Returns the submatrix of data with the extremities of data coordinates
     @public
@@ -2565,22 +2614,22 @@
      * @param {Array} data
      * @param {Boolean} [allowHtml]
      */
-    this.loadData = function (data, allowHtml) {
+    this.loadDataAsync = function (data, allowHtml) {
       priv.isPopulated = false;
       datamap.clear();
       grid.clear();
-      grid.populateFromArray({
+      grid.populateFromArrayAsync({
         row: 0,
         col: 0
       }, data, null, allowHtml, 'loadData');
       priv.isPopulated = true;
     };
 
-    this.loadDataSwift = function(data, allowHtml){
+    this.loadData = function(data, allowHtml){
       priv.isPopulated = false;
       datamap.clear();
       grid.clear();
-      grid.populateFromArraySwift({
+      grid.populateFromArray({
         row: 0,
         col: 0
       }, data, null, allowHtml, 'loadData');
@@ -2984,7 +3033,7 @@
     'minSpareRows': 0,
     'minSpareCols': 0,
     'minHeight': 0,
-    'minWidth': 0,
+    'minWidth': 50,
     'multiSelect': true,
     'fillHandle': true,
     'undo': true,
@@ -3115,7 +3164,7 @@ inputtable.BlockedRows.prototype.createCol = function (className) {
     }
 
     th = document.createElement('th');
-    th.className = this.headers[h].className;
+     th.className = this.headers[h].className;
     if (className) {
       th.className += ' ' + className;
     }
@@ -3128,8 +3177,9 @@ inputtable.BlockedRows.prototype.createCol = function (className) {
     if (className) {
       th.className += ' ' + className;
     }
-    this.instance.minWidthFix(th);
-    this.main.find('thead tr.' + this.headers[h].className)[0].appendChild(th);
+    
+     this.instance.minWidthFix(th);
+     this.main.find('thead tr.' + this.headers[h].className)[0].appendChild(th);
   }
 };
 

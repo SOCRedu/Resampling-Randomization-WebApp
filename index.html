@@ -1,47 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Meta data -- For SEO -->
+    <!-- Meta data For SEO -->
     <meta charset="utf-8">
     <title>SOCR Randomization and Resampling Web-App</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Simulation App,Randomization and Resampling App">
     <meta name="author" content="selvam,ashwini,ivo">
-  
+    <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8;" />
+
     <!-- head.js ... its a javascript loader tool -->
     <script src="js/lib/head.min.js"></script>
 
     <!-- Le styles -->
     <!--<link rel="stylesheet" href='http://fonts.googleapis.com/css?family=Lato:400,900'  type='text/css'>-->
-    <link rel="stylesheet" href="css/bootstrap.css" >
-    <link rel="stylesheet" href="css/bootstrap-responsive.css" >
-    <link rel="stylesheet"href="css/stylePagination.css" >
-    <link rel="stylesheet" media="screen" href="css/jquery-ui.css"> 
-    <link rel="stylesheet" media="screen" href="css/input/table.css">
-	<link rel="stylesheet" type="text/css" href="css/jquery.jtweetsanywhere-1.3.1.css" />
-   	<link rel="stylesheet" href="css/common.css" >
-    <link rel="stylesheet" href="css/vis.css" >
-	<link rel="stylesheet" href="css/default-table.css" >
-   	<!--<link rel="stylesheet" type="text/css" href="css/SOCR_Tools_style.css">-->
+    <link rel="stylesheet" href="dist/app.css" >
      <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
-    <style>
-
-    /* Style support for SOCR footer */
-    #footer{
-	background-color: #e5f0fc;
-	border: 1px solid #ccc;
-	border-bottom: 0;
-	clear: both;
-	padding:2px 0px;
-	text-align:center;
-	}
-
-    </style>
-    
   </head>
 
 <body>
@@ -55,11 +33,17 @@
 		<div>
 			<span class="font" >Statistical Online Computational Resource - Resampling WebApp &nbsp;</span> 
 			<div><button id="startApp" class="btn btn-primary btn-large" disabled> Initialising ... </button></div>
+			<div>
+				<span class="font">Help (recommended for first timer!) :</span>
+				<span class="switch switch-mini" data-on="danger" data-off="primary">  
+	    			<input class="help" type="checkbox" >
+	    		</span>
+			</div>
 		</div>
 		</div>
 	</div>
 	
-  <div id='header'>
+ 	<div id='header'>
 		<div class="navbar navbar-fixed-top navbar-inverse">
 			<div class="navbar-inner">
 				<div class="container-fluid">
@@ -68,24 +52,26 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</a>
-					<a data-toggle="modal" href="#aboutDesc" class=" brand" >SOCR- Resampling Webapp</a>
+					<a data-toggle="modal" href="#aboutDesc" class=" brand" >SOCR - Resampling Webapp</a>
 					<div class="nav-collapse">
 						<ul class="nav">
 							<li><a  href="http://wiki.stat.ucla.edu/socr/index.php/SOCR_ResamplingSimulation_Activity" target='_blank'>About</a></li>
 							<li><a data-toggle="modal" href="#simulationDesc">Simulations</a></li>
 							<!--<a data-toggle="modal" href="#help"><button class='btn btn-danger' >Need Help!</button></a>-->
+							<li class="help"><a href="#">Help!</a></li>
 							<li><a data-toggle="modal" href="#faq">FAQ</a></li>
 							<li class="dropdown">
 								<a id="more" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
 								<ul class="dropdown-menu" role="menu" aria-labelledby="more">
-									<li><a tabindex="-1" href="#share" data-toggle="modal">Buzz</a></li>
-									<li><a tabindex="-1" href="#generate-url" data-toggle="modal" id='share-instance-button'>Share Instance</a></li>
+									<li><a tabindex="-1" href="http://goo.gl/MNEi7" target="_blank">Screencasts</a></li>
+									<!--<li><a tabindex="-1" href="#share" data-toggle="modal">Buzz</a></li>
+                  <li><a tabindex="-1" href="#generate-url" data-toggle="modal" id='share-instance-button'>Share Instance</a></li> -->
 								</ul>
 						</li>
 						</ul>
 		  			</div><!--/.nav-collapse -->
 		  			<button class="btn btn-medium" id="reset-button"><i class="icon-refresh"></i>Reset</button>
-				
+
 				</div>
 			</div>
 		</div>
@@ -119,6 +105,8 @@
 										<li> <a data-rel="exp_binomialCoin">Binomial Coin Toss</a> </li>
 										<li> <a data-rel="exp_ballAndUrn">Ball and Urn</a> </li>
 										<li> <a data-rel="exp_cardExp">Card Experiment</a> </li>
+										<li> <a data-rel="exp_betaBinomial">Beta Binomial Experiment</a> </li>
+										<li> <a data-rel="exp_betaDistribution">The Beta Distribution Experiment</a> </li>
 									</ul>
 								</div> 
 							</section>
@@ -134,13 +122,15 @@
 											</a>
 											<ul class="dropdown-menu">
 												<li><a class="edittitles" data-toggle="modal" href="#input-modal"> Edit titles </a></li>
+												<li><a class="firstrowtitles"> Use first row as titles </a></li>
+												<li><a class="removecol" data-toggle="modal" href="#input-modal"> Remove a Column </a></li>
 											</ul>
-											</a>
 										</div>
 										<!--<input class="btn" type='button' value='Use Entire Dataset'>-->
 										
-										<input type="button" class="btn" value="Use Selected" id="submatrix_spreadsheet">
+										<a class="btn" id="submatrix_spreadsheet">Use Selected <i class="icon-question-sign popups" rel="popover" data-content="Select One Group at a time" data-original-title="Selected Groups"></i></a>
 										<!--<input class="btn btn-danger" type='button' value='Reset'>-->
+										<a class="btn" id="spreadsheet_sort">Sort</a>
 										<a class = "reset-spreadsheet btn btn-danger" ><i class="icon-refresh"></i></a>
 										<span class="response"></span>
 										<!--
@@ -158,18 +148,18 @@
 											<form class="form-inline">	
 											<input type="url" name="urlbox" class="input-xlarge" placeholder="Enter URL">
 											<input type="submit" value="Submit" name="submit">
-											<div class="btn-group" style="float:left;">
+											<!--<div class="btn-group" style="float:left;">
 												<a class="btn dropdown-toggle" data-toggle="dropdown" href="#" >Method<span class="caret"></span></a>
 												<ul class="dropdown-menu">
 													<li><a href="#" id='fetchinstant'>Instantaneous</a></li>
 													<li><a href="#" id='fetchasync'>Asynchronous</a></li>
 												</ul>
-										  	</div>
+										  	</div>-->
 											</form>
 										</section>
 										<section id="drop"> Drag and Drop your URL here </section>
 										<div id="status"></div>	
-									 	<div class="dataTable spreadsheet_copy" id="input"></div>
+									 	<div class="handsontable spreadsheet_copy" id="input"></div>
 									 	
 										
 									</div>
@@ -197,9 +187,45 @@
 							<section id="worldbank">
 								<a class="btn splash-datadriven" href="#"><i class =" icon-circle-arrow-left"></i></a>
 								<div class ="page-header">
-									<h3> Worldbank API </h3>
+									<h3> WorldBank Datasets </h3>
 								</div>
-								<!--<div style="width:300px; font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; line-height:20px"><div style="background-color:#333; padding:0px 5px; font-weight:bold"><div style="color:#fff; font-size:12px; line-height:20px;"><a href="http://data.worldbank.org/indicator/AG.LND.AGRI.ZS" style="color:#fff;text-decoration:none;" class="active">Agricultural land (% of land area)</a></div></div><script type="text/javascript">widgetContext = { "url": "http://data.worldbank.org/widgets/indicator/0/web_widgets_2/AG.LND.AGRI.ZS/countries", "width": 300, "height": 225, "widgetid": "web_widget_iframe_6b35281e4a873f0fb6537769f2473197" };</script><div id="web_widget_iframe_6b35281e4a873f0fb6537769f2473197"></div><script src="http://data.worldbank.org/profiles/datafinder/modules/contrib/web_widgets/iframe/web_widgets_iframe.js"></script><div style="font-size: 10px; color:#000">Data from <a href="http://data.worldbank.org/indicator/AG.LND.AGRI.ZS" style="color:#CCC;">World Bank</a></div></div>-->
+
+									<form class="form-horizontal" id="worldbank-form">
+										<div class="control-group">
+										 	<label for="dataset" class="control-label"> Dataset </label>
+										 	<div class="controls">
+										 		<select id="indicator">
+
+										 			<option value="SP.DYN.CBRT.IN">Birth Rate</option>
+										 			<option value="SP.DYN.CDRT.IN">Death Rate</option>
+										 			<option value="SH.XPD.TOTL.ZS">Health Expenditures</option>
+										 			<option value="SP.DYN.LE00.IN">Life Expectancy</option>
+										 			<option value="SP.POP.TOTL">Total Population</option>
+										 			<option value="SL.TLF.TOTL.IN">Total Labor Force</option>
+										 			<option value="EN.ATM.CO2E.PCNY.GDP.MKTP.CD">CO2 emissions per capita</option>
+										 			<option value="NY.GDP.MKTP.CD">GDP</option>
+										 			<option value="SP.URB.TOTL">Urban Population</option>
+										 			<option value="FR.INR.DPST">Deposit Interest Rates</option>
+										 			<option value="1.1_ACCESS.ELECTRICITY.TOT">Access to electricity (% of total population)</option><option value="15.1_OTHER.SECT.ENER.INTENS">Energy intensity of other sectors (MJ/$2005)</option><option value="2.1.3_SHARE.HYDRO">Hydro energy consumption (% in TFEC)</option><option value="2.2_ACCESS.NONSOLIDFUEL.RURAL">Access to Non-Solid Fuel (% of rural population)</option><option value="3.1.10_MARINE.CONSUM">Marine energy consumption (TJ)</option><option value="3.1_PRI.NEW.ENTRANTS">Primary education, new entrants, national source</option><option value="3.5_PRI.CLASSROOMS">Primary education, classrooms, national source</option><option value="4.3_TOTAL.EDU.RECURRENT">Public recurrent spending on total education (% of total public recurrent spending)</option><option value="5.1.1_GEO.TOTA.AID.EC">International aid disbursed to total education, European Commission to Georgia (USD million)</option><option value="5.1.1_MOZ.TOTA.AID.CAN"> International aid disbursed to total education, Canada to Mozambique (USD million) </option><option value="5.1.10_AFG.TOTA.AID.SIDA">International aid disbursed to total education, Sida to Afghanistan (USD million)</option><option value="5.1.11_ETH.TOTA.AID.JICA">International aid disbursed to total education, JICA to Ethiopia (USD million) </option><option value="5.1.13_MOZ.TOTA.AID.ESP"> International aid disbursed to total education, Spain to Mozambique (USD million) </option><option value="5.1.2_ALB.TOTA.AID.BEI">International aid disbursed to total education, BEI to Albania (USD million)</option><option value="5.1.2_KGZ.TOTA.AID.ADPP.GIZ"> International aid disbursed to total education, GIZ to Kyrgyzstan (USD million)  </option><option value="5.1.2_RE.CAPACITY">Renewable energy installed capacity (GW)</option><option value="5.1.3_CIV.TOTA.AID.WB"> International aid disbursed to total education, World Bank to Côte d'Ivoire (USD million)   </option><option value="5.1.3_LAO.TOTA.AID.EC"> International aid disbursed to total education, European Commission to Laos (USD million)  </option><option value="5.1.3_TJK.TOTA.AID.OPENS"> International aid disbursed to total education, Open Society Foundations to Tajikistan (USD million)  </option><option value="5.1.4_GHA.TOTA.AID.UNICEF">International aid disbursed to total education, UNICEF to Djibouti (USD million) </option><option value="5.1.4_NER.TOTA.AID.JAPAN">International aid disbursed to total  education, Japan to Niger (USD million) </option><option value="5.1.5_CMR.TOTA.AID.UNESCO">International aid disbursed to total education, UNESCO to Cameroun (USD million)</option><option value="5.1.5_MRT.TOTA.AID.UNICEF">International aid disbursed to total education, UNICEF to Mauritania (USD million) </option><option value="5.1.6_BFA.TOTA.AID.NLD"> International aid disbursed to total education, Netherlands to Burkina Faso (USD million)   </option><option value="5.1.6_MDG.TOTA.AID.WFP"> International aid to total education executed by WFP in Madagascar (USD million)  </option><option value="5.1.7_BFA.TOTA.AID.UNICEF"> International aid disbursed to total education, UNICEF to Burkina Faso (USD million)  </option><option value="5.1.7_MWI.TOTA.AID.KFW">International aid disbursed to total education,  KfW to Malawi (USD million) </option><option value="5.1.8_GNB.TOTA.AID.JAP">International aid disbursed to total education, Japan (via UNICEF) to Guinea Bissau (USD million) </option><option value="5.1.9_AFG.TOTA.AID.NZL">International aid disbursed to total education, New Zealand to Afghanistan (USD million)</option><option value="5.1_TOTAL.EDU.AID">International aid for total education, disbursed (up to present year) and scheduled (next years), aggregation of reporting donors (USD million)</option><option value="5.2.1_GHA.BAS.AID.DFID">International aid disbursed to basic education, DFID to Djibouti (USD million) </option><option value="5.2.1_MWI.BAS.AID.AFDB">International aid disbursed to basic education,  AfDB to Malawi (USD million) </option><option value="5.2.10_ETH.BAS.AID.JPN">International aid disbursed to basic education, Japan Government to Ethiopia (USD million) </option><option value="5.2.11_LAO.BAS.AID.INGOS"> International aid disbursed to basic education, International NGOs to Laos (USD million)  </option><option value="5.2.16_ETH.BAS.AID.USAID">International aid disbursed to basic education, USAID to Ethiopia (USD million) </option><option value="5.2.2_GEO.BAS.AID.UNICEF">International aid disbursed to basic education, UNICEF to Georgia (USD million)</option><option value="5.2.2_MRT.BAS.AID.AFD">International aid disbursed to basic education, AFD to Mauritania (USD million) </option><option value="5.2.3_AFG.BAS.AID.FRA">International aid disbursed to basic education, France to Afghanistan (USD million)</option><option value="5.2.3_GNB.BAS.AID.ADPP.OTH">International aid disbursed to basic education, ADPP (other donors) to Guinea Bissau (USD million) </option><option value="5.2.3_SEN.BAS.AID.GPE"> International aid disbursed to basic education, Global Partnership for Education to Senegal (USD million)  </option><option value="5.2.4_DJI.BAS.AID.AFDB">International aid disbursed to basic education, AfDB to Djibouti (USD million) </option><option value="5.2.4_MRT.BAS.AID.SP">International aid disbursed to basic education, Spanish Cooperation to Mauritania (USD million)</option><option value="5.2.5_AFG.BAS.AID.IND">International aid disbursed to basic education, India to Afghanistan (USD million)</option><option value="5.2.5_LAO.BAS.AID.GPE"> International aid disbursed to basic education, Global Partnership for Education to Laos (USD million)  </option><option value="5.2.5_VNM.BAS.AID.UNICEF">International aid disbursed to basic education, UNICEF to Vietnam (USD million)  </option><option value="5.2.6_GNB.BAS.AID.PORT">International aid disbursed to basic education, Portuguese Cooperation to Guinea Bissau (USD million)</option><option value="5.2.6_TLS.TOT.AID.KOR"> International aid disbursed to total education, South Korea to Timor-Leste (USD million)  </option><option value="5.2.7_KHM.BAS.AID.UNESCO"> International aid disbursed to basic education, UNESCO to Cambodia (USD million)  </option><option value="5.2.7_ZMB.BAS.AID.USAID">International aid disbursed to basic education, USAID to Zambia (USD million) </option><option value="5.2.8_NER.BAS.AID.CHE">International aid disbursed to basic education, Switzerland to Niger (USD million) </option><option value="5.2.9_NER.BAS.AID.LUX">International aid disbursed to basic education, Luxembourg to Niger (USD million) </option><option value="6.5_NEXT.JSR">Date of next Joint Education Sector Review (year=full date in notes)</option><option value="7.4_PREV.ALLOCATION.AMOUNT">Previous allocation - Amount disbursed (USD million)</option><option value="8.1_SCH.LEAVING.EXAMS">Administration of school leaving exams (yes=1, no=0, see notes if available)</option><option value="8.3.1_GIN.PASEC.CP2.FR.MEAN">PASEC in Guinea, CP2, French (mean score)</option><option value="8.3.1_SEN.LEAR.TEST.CE2.MATH.MIN">National assessment for learning outcomes (SNERS) in Senegal, CE2, Mathematics, minimal competency (%)</option><option value="8.3.11_GEO.LEAR.TEST.9.MAT.LOWEST">National assessment for learning outcomes in Georgia, grade 9, Mathematics, students in lowest level (%)</option><option value="8.3.13_GHA.TIMSS.8.MAT.MEAN">TIMSS in Ghana, grade 8, Mathematics (mean score)</option><option value="8.3.15_NER.LEAR.TEST.CM2.MATH.MEAN">National assessment for learning outcomes in Niger, CM2, Mathematics (mean score)</option><option value="8.3.18_GHA.LITERACY.P5.WORDS">Making the Grade Scores in Ghana, P5, Literacy in English, Words per minute (mean)</option><option value="8.3.2_CIV.LEAR.TEST.SEC.ALL.MEAN">National assessment for learning outcomes in Côte d'Ivoire, lower secondary (BEPC), mean score of all subjects </option><option value="8.3.2_MDG.PASEC.CM2.MAT">PASEC in Madagascar, CM2, Mathematics (mean score)</option><option value="8.3.20_GIN.LEAR.TEST.CEPE.MAX">National assessment at the end of primary (CEPE) in Guinea, CM2 (6 grade), maximal competency </option><option value="8.3.23_NER.LEAR.TEST.CE2.MATH.UNDERMIN">National assessment for learning outcomes in Niger, CE2, Mathematics, under minimal competency (%)</option><option value="8.3.3_CIV.LEAR.TEST.PRIM.ALL.MIN.COMP">National assessment for learning outcomes in Côte d'Ivoire, primary (CEPE), minimal competency (%)</option><option value="8.3.3_SEN.LEAR.TEST.CE2.MATH.OPT">National assessment for learning outcomes (SNERS) in Senegal, CE2, Mathematics, optimal competency (%)</option><option value="8.3.4_GIN.PASEC.CM1.FR.MEAN">PASEC in Guinea, CM1, French (mean score)</option><option value="8.3.5_ALB.PISA.910.SCIENCE">PISA in Albania, grade 9 and 10, Science (mean score)</option><option value="8.3.5_NER.LEAR.TEST.CE2.FR.OPTIM">National assessment for learning outcomes in Niger, CE2, French, optimal competency (%)</option><option value="8.3.6_KHM.LEAR.TEST.9.MAT.MEAN">National assessment for learning outcomes in Cambodia, grade 9, Mathematics (mean score)</option><option value="8.3.7_GHA.LEAR.TEST.P3.MAT.ABOV.MIN">National assessment for learning outcomes in Ghana, P3, Mathematics, students above minimal competency (%)</option><option value="8.3.8_GIN.PASEC.CM1.FR.MATH.MEAN.END">PASEC in Guinea, CM1, French and Mathematics, mean score at the end of year (%)</option><option value="8.3.9_LAO.LEAR.TEST.5.WORLD.PROF">National assessment for learning outcomes in Laos, grade 5, world around us (proficiency)</option><option value="9.5_PIU">Number of parallel implementation units, education sector</option><option value="A11iii">33.Growth of Incumbents: StDev</option><option value="A4">04.Number of Survivors</option><option value="A7iv">14.Export Value per Entrant: First Quartile</option><option value="A9iv">24.Export Value per Survivor: First Quartile</option><option value="AG.CRP.FNO.CD">Producer Price for Fonio (per tonne, current US$)</option><option value="AG.CRP.WHT.CD">Producer Price for Wheat (per tonne, current US$)</option>
+
+										 		</select>
+										 	</div>
+										</div>
+										<div class="control-group">
+										 	<label for="year2" class="control-label">Year Range </label>
+										 	<div class="controls">
+										 		<input type = "number" value = "2008" id="year1"> - <input type="number" value = "2011" id="year2">
+										 		<span class="help-block">Data Request size increases proportionally to the year range</span>
+										 	</div>	
+										</div>
+										<div class="control-group">
+											<div class="controls">
+												<input type="submit" value="Submit" class="btn">
+											</div>
+										</div>
+									</form>
+									<div class="worldbank-response"></div>
+								
 							</section>
 							<section id="simulationdriven-details">
 								<a class="btn splash-datadriven" href="#"><i class =" icon-circle-arrow-left"></i></a>
@@ -235,7 +261,7 @@
 									
 						</div>	
 								
-						<h3>
+						<h3 class="dataset-header">
 							<a href="#">DataSet <i class="icon-question-sign popups" rel="popover" data-content="It is graphical view of the dataset from where the random samples are generated.Goto input tab to get started!" data-original-title="Dataset"></i></a>
 						</h3>
 						<div class='q'>
@@ -260,13 +286,13 @@
 							<div class="span8" id="ctrlMessage"></div>
 							<div class="span8" id="progressBar" style="display:none"></div>
 						</div>
-						<div id='controller-content'>
+						<div id='controller-content' style="font-size:12px">
 							<div class="alert alert-error">Choose a experiment from "simulation drive" or enter data in the "data drive" first!</div>
 						</div>
 					</div><!--/slide-out-controller-->
 		  		</div><!--span8-->
 				<div class="span4">
-					<h3>Sample List 
+					<h3>Sample List
 						<span>
 							<i class="icon-question-sign popups" rel="popover" data-content="It shows the list of generated samples when the show button is pressed." data-original-title="Sample List"></i>
 						</span>
@@ -326,7 +352,7 @@
 					<h4>Tweet (use #socrWebapp hashtags)</h4>
 					<div id='tweetbox'>
 						<a href="https://twitter.com/intent/tweet?button_hashtag=socrWebapp&text=I%20started%20using%20socr%20webApps.%20You%20should%20try%20too.%20 http://www.socr.ucla.edu/htmls/HTML5/SOCR_Resampling_Webapp/" class="twitter-hashtag-button" data-lang="en" data-related="jasoncosta">Tweet #socrWebApp</a>
-						<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+						<!--<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>-->
 					</div>
 					<div id='tweetFeed'></div>
 				</div>
@@ -352,7 +378,7 @@
 					<h3>Data Input </h3>
 				</div>
 				<div class="modal-body">
-					<div id="input-table" class="dataTable"></div>
+					<div id="input-table" class="handsontable"></div>
 					<div id='status'></div>
 				</div>
 			</div>
@@ -385,8 +411,9 @@
 				<div class="modal-body">
 					<p>There are a list of simulation experiments you can choose from to create the dataset for further analysis. Currently we have 4 experiments installed into the App. More are soon to come!</p>
 					<ul>
-						<li>Coin Toss </li>
+						<li>Binomial Coin Toss </li>
 						<li>Ball and Urn</li>
+                        <li>Card</li>
 					</ul>
 				</div>
 			</div>
@@ -420,6 +447,7 @@
 					
 				</div>
 			</div>
+
 			<div id='footer'>
 
 			<!-- Start SOCR footer -->
@@ -442,24 +470,22 @@
     <!--<script type='text/javascript' src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>-->
 <script type='text/javascript'>
     
+	//Fix for browsers that don't support console logging
+	if(!window.console) console = {};
+		console.log = console.log || function(){};
+		console.warn = console.warn || function(){};
+		console.error = console.error || function(){};
+		console.info = console.info || function(){};
+
     head.js("js/init.js",
     		"js/lib/jquery.min.js",
-            "js/bootstrap/bootstrap-transition.js",
-            "js/bootstrap/bootstrap-alert.js",
-            "js/bootstrap/bootstrap-tab.js",
-            "js/bootstrap/bootstrap-button.js",
-            "js/bootstrap/bootstrap-modal.js",
-            "js/bootstrap/bootstrap-dropdown.js",
-            "js/bootstrap/bootstrap-scrollspy.js",
-            "js/bootstrap/bootstrap-tooltip.js",
-            "js/bootstrap/bootstrap-popover.js",
-            "js/bootstrap/bootstrap-collapse.js",
-            "js/bootstrap/bootstrap-carousel.js",
-            "js/bootstrap/bootstrap-typeahead.js",
+    		"js/lib/async.js",
+            "js/bootstrap/bootstrap.min.js",
 			{coreFunctions:"js/exp/core.js"},
 			{binomialCoin:"js/exp/binomialCoin.js"},
 			{ballAndUrn:"js/exp/ballAndUrn.js"},
 			{cardExp:"js/exp/cardExp.js"},
+			{betaBinomial:"js/exp/betaBinomial.js"},
             {inputTile:"js/input/inputtable.js"},
 			{Model:"js/appModel.js"},
 			{View:"js/appView.js"},
@@ -472,13 +498,25 @@
 			"js/lib/jtweet/jquery.jtweetsanywhere-1.3.1.min.js",
 			"js/lib/jquery.transit.min.js",
 			"js/lib/jquery.easing.1.3.js",
+            "js/lib/jquery.pubsub.js",
+            "js/lib/jquery.handsontable.full.js",
 			"js/input/data.js",
+			"js/input/worldbank.js",
 			"js/vis/tooltip.js",
-			"js/tools/FCal.js"
+			"js/tools/FCal.js",
+			"js/tools/ZCal.js",
+            "js/lib/mustache/mustache.js",
+            "js/lib/chardinjs/chardinjs.min.js",
+            "js/tutorial/tutorial.js",
+            "js/utils.js",
+            "js/appData.js",
+            "js/bootstrap/bootstrapSwitch.js",
+            "js/config.js",
+            "js/bootstrap/bootstrap.min.js"
 	    	);
     
 	head.ready(function () {
-		
+
 		var url = window.location.href;
 		var baseUrl = url.substring(0, url.indexOf('index.html'));
 		if(baseUrl =='')
@@ -489,21 +527,20 @@
 
 		@Latest Revision: Segregrating all global variables to the necessary SOCR sub-object
 		*/
-		socr.exp.inputSliderState = 0;
-		socr.exp.controllerSliderState = 0;
+		socr.exp.controllerSliderState = "hide";
 		
 		/*
 		*Loading MVC
 		*/
-		model = new socr.model();
-		view = new socr.view(model);
-		controller = new socr.controller(model,view);
+		socr.model = new socr.model();
+		socr.view = new socr.view(socr.model);
+		socr.controller = new socr.controller(socr.model,socr.view);
 		
 		/*
 		*  CoverPage rendering
 		*/
 
-		view.CoverPage();
+		socr.view.CoverPage();
 
 		document.onreadystatechange = function(){
 			 if (document.readyState == 'complete'){
@@ -519,15 +556,16 @@
 		 */
 		$(window).resize(function(){
 			console.log('Coverpage function')
-			view.CoverPage();
+			socr.view.CoverPage();
 		});
 		
 		$(document).ready(function(){
-					
 		/*
 		* Initialize the controller 
 		*/
-		controller.initialize();   
+		socr.controller.initialize();
+
+		socr.view.initialize();
 		
 		var urlParams = {};
 		(function () {
@@ -551,13 +589,13 @@
 			$("#nSize").val(urlParams.nSize);
 			$("#countSize").val(urlParams.countSize);
 			
-			model.setDataset({
+			socr.model.setDataset({
 					data:urlParams.dataset,
 					processed:false,
 					type:'url'
 					});
 			//load the dataset grid with the url values		
-			view.loadInputSheet(urlParams.dataset.split(","));
+			socr.view.loadInputSheet(urlParams.dataset.split(","));
 			//view.updateSimulationInfo()
 
 		$('section .response').html('Data loaded successfully! Just go to controller tile and start generating random samples!<i class="icon-ok"></i>').show();
@@ -586,7 +624,7 @@
 	 <script src="http://www.google-analytics.com/urchin.js" type="text/javascript"> </script>
 	  <script type="text/javascript"> _uacct = "UA-676559-1"; urchinTracker(); </script>
 <!-- End of GoogleAnalytics Code -->
-
+<img src="img/cards.png" style="display:none" />
 
 </html>
 
